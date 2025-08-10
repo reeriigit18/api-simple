@@ -1,6 +1,14 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/prisma";
 
+interface AuthenticatedRequest extends Request {
+ user?: {
+  id: number;
+  email: string;
+ };
+}
+
+
 export const userCreate = async (req: Request, res: Response) => {
   const { email, password } = req.body;
     if (!email || !password) {
@@ -38,6 +46,8 @@ export const getAllUsers = async (req: Request, res: Response) => {
 //selecting a user by id
 export const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
+  const userId = (req as AuthenticatedRequest).user?.id ;
+
   try {
     const user = await prisma.user.findUnique({
       where: { id: Number(id) },
