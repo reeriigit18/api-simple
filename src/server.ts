@@ -12,6 +12,7 @@ app.get('/', (req, res) => {
   res.send('Hello, World!');    
 });
 
+//inseting a user
 app.post('/register', async (req: Request, res: Response) => {
   const { email, password } = req.body;
     if (!email || !password) {
@@ -34,6 +35,8 @@ app.post('/register', async (req: Request, res: Response) => {
 
 });
 
+
+//selecting all users
 app.get('/users', async (req: Request, res: Response) => {
   try {
     const users = await prisma.user.findMany();
@@ -44,6 +47,8 @@ app.get('/users', async (req: Request, res: Response) => {
   }
 });
 
+
+//selecting a user by id
 app.get('/users/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
@@ -60,6 +65,8 @@ app.get('/users/:id', async (req: Request, res: Response) => {
   }
 });
 
+
+//deleting a user
 app.put('/users/:id', async (req: Request, res: Response) => {
   const { id } = req.params;  
   const { email, password } = req.body;
@@ -78,6 +85,20 @@ app.put('/users/:id', async (req: Request, res: Response) => {
   }
 });
 
+
+//deleting a user
+app.delete('/users/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    await prisma.user.delete({
+      where: { id: Number(id) },
+    });
+    return res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return res.status(500).json({ error: "Failed to delete user" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
